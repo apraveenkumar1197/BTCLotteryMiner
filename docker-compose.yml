@@ -1,0 +1,25 @@
+services:
+  miner:
+    build: .
+    image: bitcoin-lottery:latest
+    container_name: bitcoin-lottery
+    restart: unless-stopped
+    environment:
+      # Required: your PUBLIC receiving address. Never put a seed phrase or private key here.
+      BTC_ADDRESS: ${BTC_ADDRESS:?Set BTC_ADDRESS in .env}
+      POOL: ${POOL:-stratum.ckpool.org:3333}
+      SUGGEST_DIFFICULTY: ${SUGGEST_DIFFICULTY:-1}
+      WORKER: ${WORKER:-lotto}
+      # 0 = use all cores.
+      THREADS: ${THREADS:-0}
+      STATS_INTERVAL: ${STATS_INTERVAL:-5}
+      # Optional Telegram alerts (leave empty to disable)
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+    # Optional CPU cap, e.g. CPU_LIMIT=4 leaves the rest of the machine free.
+    cpus: ${CPU_LIMIT:-1}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
